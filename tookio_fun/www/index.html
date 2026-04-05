@@ -1,0 +1,234 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap');
+
+	:root {
+		--bg: #ffffff;
+		--ink: #0f172a;
+		--muted: #64748b;
+		--line: #e2e8f0;
+		--card: #ffffff;
+		--chip: #f8fafc;
+		--accent: #0ea5e9;
+	}
+
+	html, body, .page-content-wrapper, .page_content {
+		background: var(--bg) !important;
+	}
+
+	.fun-wrap {
+		min-height: 100vh;
+		padding: 40px 20px 56px;
+		background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+		font-family: 'Manrope', sans-serif;
+		color: var(--ink);
+	}
+
+	.fun-shell {
+		width: min(1100px, 100%);
+		margin: 0 auto;
+	}
+
+	.hero {
+		padding: 16px 0 20px;
+	}
+
+	.badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		background: var(--chip);
+		border: 1px solid var(--line);
+		border-radius: 999px;
+		padding: 7px 12px;
+		font-size: 12px;
+		font-weight: 700;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		color: #0c4a6e;
+	}
+
+	.hero h1 {
+		margin: 14px 0 8px;
+		font-size: clamp(34px, 5.6vw, 62px);
+		line-height: 1.02;
+		letter-spacing: -0.03em;
+	}
+
+	.hero p {
+		max-width: 760px;
+		margin: 0;
+		font-size: clamp(16px, 2.1vw, 20px);
+		line-height: 1.55;
+		color: var(--muted);
+	}
+
+	.projects {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+		gap: 14px;
+		margin-top: 26px;
+	}
+
+	.card {
+		background: var(--card);
+		border: 1px solid var(--line);
+		border-radius: 20px;
+		padding: 16px;
+		box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		transition: transform 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+	}
+
+	.card:hover {
+		transform: translateY(-2px);
+		border-color: #cbd5e1;
+		box-shadow: 0 14px 26px rgba(15, 23, 42, 0.08);
+	}
+
+	.card-top {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 10px;
+	}
+
+	.card-title {
+		margin: 0;
+		font-size: 20px;
+		line-height: 1.2;
+		letter-spacing: -0.01em;
+	}
+
+	.card-tag {
+		font-size: 11px;
+		font-weight: 700;
+		text-transform: uppercase;
+		padding: 5px 8px;
+		background: #f0f9ff;
+		color: #0c4a6e;
+		border-radius: 999px;
+		border: 1px solid #bae6fd;
+	}
+
+	.card p {
+		margin: 0;
+		color: #475569;
+		line-height: 1.52;
+	}
+
+	.card-actions {
+		margin-top: auto;
+		display: flex;
+		gap: 10px;
+		align-items: center;
+	}
+
+	.btn {
+		appearance: none;
+		border: 1px solid #0284c7;
+		background: linear-gradient(135deg, #0ea5e9, #0284c7);
+		color: #ffffff;
+		text-decoration: none;
+		font-weight: 700;
+		font-size: 14px;
+		padding: 9px 12px;
+		border-radius: 12px;
+	}
+
+	.btn.secondary {
+		border: 1px solid var(--line);
+		background: #ffffff;
+		color: #334155;
+	}
+
+	.section {
+		margin-top: 30px;
+		background: #ffffff;
+		border: 1px solid var(--line);
+		border-radius: 20px;
+		padding: 16px;
+	}
+
+	.section h2 {
+		margin: 0 0 8px;
+		font-size: 23px;
+		letter-spacing: -0.01em;
+	}
+
+	.donate-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+		gap: 10px;
+		margin-top: 12px;
+	}
+
+	.donate-btn {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		min-height: 50px;
+		text-decoration: none;
+		font-weight: 700;
+		border-radius: 12px;
+		border: 1px solid var(--line);
+		background: #ffffff;
+		color: #0f172a;
+	}
+
+	.donate-btn:hover {
+		border-color: #cbd5e1;
+		background: #f8fafc;
+	}
+</style>
+
+<div class="fun-wrap">
+	<div class="fun-shell">
+		<section class="hero">
+			<span class="badge">Tookio Fun </span>
+			<h1>Playful mini projects, Kenyan Inspired.</h1>
+			<p>
+				A collection of random vibe-coded mini projects, inspired by Nairobi culture
+			</p>
+		</section>
+
+		<section class="projects">
+			<article class="card">
+				<div class="card-top">
+					<h3 class="card-title">Chakula Slot Machine</h3>
+					<span class="card-tag">Live</span>
+				</div>
+				<p>Spin a stylish food machine and let luck decide your next plate.</p>
+				<div class="card-actions">
+					<a class="btn" href="/projects/chakula-slot">Open Project</a>
+				</div>
+			</article>
+
+			<article class="card">
+				<div class="card-top">
+					<h3 class="card-title">Matatu Mini-Game</h3>
+					<span class="card-tag">Live</span>
+				</div>
+				<p>A fast-paced Nairobi street runner with matatu chaos and style points.</p>
+				<div class="card-actions">
+					<a class="btn secondary" href="/projects/matatu-mini-game">Open Project</a>
+				</div>
+			</article>
+		</section>
+
+		<section class="section">
+			<h2>Support The Fun</h2>
+			<p style="margin:0;color:#64748b;">If a project made you smile, you can support with any method below.</p>
+			<div class="donate-grid">
+				<a class="donate-btn" href="#">Donate via M-Pesa</a>
+				<a class="donate-btn" href="#">Donate via PayPal</a>
+				<a class="donate-btn" href="#">Buy Me A Coffee</a>
+			</div>
+		</section>
+	</div>
+</div>
+{% endblock %}

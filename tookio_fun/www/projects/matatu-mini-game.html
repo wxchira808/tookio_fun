@@ -1,0 +1,724 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<style>
+	@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+	html, body, .page-content-wrapper, .page_content {
+		background: #ffffff !important;
+	}
+	:root {
+		--ink: #0f172a;
+		--muted: #64748b;
+		--line: #e2e8f0;
+	}
+	.wrap {
+		min-height: 100vh;
+		padding: 20px;
+		font-family: 'Space Grotesk', sans-serif;
+		background:
+			radial-gradient(1200px 380px at 8% -10%, rgba(236, 72, 153, 0.12), transparent 65%),
+			radial-gradient(900px 360px at 92% -5%, rgba(14, 165, 233, 0.16), transparent 66%),
+			linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+	}
+	.shell {
+		width: min(1120px, 100%);
+		margin: 0 auto;
+	}
+	.top {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 10px;
+		margin-bottom: 14px;
+	}
+	.back {
+		text-decoration: none;
+		color: var(--ink);
+		border: 1px solid var(--line);
+		padding: 8px 12px;
+		border-radius: 12px;
+		font-weight: 600;
+		background: #ffffff;
+	}
+	.hype {
+		font-size: 12px;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		color: #db2777;
+		font-weight: 700;
+	}
+	.grid {
+		display: grid;
+		grid-template-columns: 1.1fr 0.9fr;
+		gap: 14px;
+	}
+	.stage {
+		position: relative;
+		height: 620px;
+		border-radius: 22px;
+		overflow: hidden;
+		border: 1px solid #dbeafe;
+		background:
+			radial-gradient(ellipse at 50% 0%, #1f2937 0%, #0b1220 70%),
+			linear-gradient(180deg, #0ea5e9 0%, #1d4ed8 100%);
+		box-shadow: 0 20px 40px rgba(2, 132, 199, 0.18);
+	}
+	.skyline {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 70px;
+		height: 150px;
+		background:
+			repeating-linear-gradient(90deg,
+				rgba(15, 23, 42, 0.6) 0 26px,
+				rgba(30, 41, 59, 0.6) 26px 44px,
+				transparent 44px 58px);
+		opacity: 0.55;
+		pointer-events: none;
+	}
+	.equalizer {
+		position: absolute;
+		left: 12px;
+		right: 12px;
+		top: 14px;
+		height: 36px;
+		display: flex;
+		align-items: end;
+		gap: 4px;
+	}
+	.bar {
+		flex: 1;
+		border-radius: 8px 8px 2px 2px;
+		background: linear-gradient(180deg, #f472b6, #22d3ee);
+		opacity: 0.88;
+		height: 20%;
+		transition: height 0.12s linear;
+	}
+	.road {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 500px;
+		background:
+			linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.15) 18%, rgba(15, 23, 42, 0.82) 100%),
+			linear-gradient(
+				90deg,
+				rgba(15, 23, 42, 0.95) 0 24.2%,
+				rgba(30, 41, 59, 0.95) 24.2% 25.8%,
+				rgba(15, 23, 42, 0.95) 25.8% 49.2%,
+				rgba(30, 41, 59, 0.95) 49.2% 50.8%,
+				rgba(15, 23, 42, 0.95) 50.8% 74.2%,
+				rgba(30, 41, 59, 0.95) 74.2% 75.8%,
+				rgba(15, 23, 42, 0.95) 75.8% 100%
+			);
+	}
+	.line {
+		position: absolute;
+		width: 6px;
+		height: 36px;
+		border-radius: 6px;
+		background: #f8fafc;
+		opacity: 0.9;
+	}
+	.entity {
+		position: absolute;
+		width: 44px;
+		height: 44px;
+		transform: translate(-50%, -50%);
+		pointer-events: none;
+	}
+	.entity svg {
+		width: 100%;
+		height: 100%;
+		filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.35));
+	}
+	.entity.player {
+		z-index: 20;
+		width: 48px;
+		height: 48px;
+	}
+	.entity.pickup {
+		width: 28px;
+		height: 28px;
+	}
+	.fx {
+		position: absolute;
+		left: 50%;
+		top: 40%;
+		transform: translate(-50%, -50%);
+		font-size: 18px;
+		font-weight: 700;
+		color: #fff;
+		padding: 8px 12px;
+		border-radius: 10px;
+		background: rgba(15, 23, 42, 0.55);
+		border: 1px solid rgba(255, 255, 255, 0.28);
+		opacity: 0;
+		pointer-events: none;
+	}
+	.fx.show {
+		opacity: 1;
+		animation: flash 0.7s ease forwards;
+	}
+	@keyframes flash {
+		0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+		20% { opacity: 1; }
+		100% { transform: translate(-50%, -64%) scale(1.05); opacity: 0; }
+	}
+	.panel {
+		border: 1px solid var(--line);
+		border-radius: 22px;
+		background: #ffffff;
+		padding: 16px;
+		box-shadow: 0 16px 30px rgba(15, 23, 42, 0.06);
+	}
+	.title {
+		margin: 0;
+		font-size: clamp(24px, 4vw, 40px);
+		line-height: 1.04;
+		letter-spacing: -0.03em;
+	}
+	.sub {
+		margin: 8px 0 14px;
+		color: var(--muted);
+		font-size: 15px;
+		line-height: 1.5;
+	}
+	.stats {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 8px;
+		margin-bottom: 12px;
+	}
+	.chip {
+		border: 1px solid var(--line);
+		border-radius: 14px;
+		padding: 9px;
+		background: #f8fafc;
+	}
+	.k {
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		color: #64748b;
+	}
+	.v {
+		margin-top: 2px;
+		font-size: 24px;
+		font-weight: 700;
+		letter-spacing: -0.02em;
+		color: #0f172a;
+	}
+	.row {
+		display: flex;
+		gap: 8px;
+		flex-wrap: wrap;
+	}
+	.btn {
+		appearance: none;
+		border: 1px solid #0ea5e9;
+		background: linear-gradient(135deg, #22d3ee, #0284c7);
+		color: #fff;
+		font-weight: 700;
+		padding: 10px 14px;
+		border-radius: 12px;
+		cursor: pointer;
+	}
+	.btn.secondary {
+		border-color: var(--line);
+		background: #fff;
+		color: #334155;
+	}
+	.note {
+		margin-top: 12px;
+		padding: 10px;
+		background: #f8fafc;
+		border: 1px solid var(--line);
+		border-radius: 12px;
+		font-size: 13px;
+		color: #475569;
+		line-height: 1.5;
+	}
+	.touch {
+		display: none;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 8px;
+		margin-top: 12px;
+	}
+	.pad {
+		border: 1px solid var(--line);
+		border-radius: 12px;
+		padding: 10px;
+		background: #ffffff;
+		text-align: center;
+		font-weight: 700;
+		cursor: pointer;
+	}
+	@media (max-width: 980px) {
+		.grid { grid-template-columns: 1fr; }
+		.stage { height: 560px; }
+	}
+	@media (max-width: 720px) {
+		.touch { display: grid; }
+	}
+</style>
+
+<div class="wrap">
+	<div class="shell">
+		<div class="top">
+			<a class="back" href="/">Back to Projects</a>
+			<div class="hype">Nganya mode</div>
+		</div>
+		<div class="grid">
+			<section class="stage" id="stage">
+				<div class="equalizer" id="equalizer"></div>
+				<div class="skyline"></div>
+				<div class="road" id="road"></div>
+				<div class="fx" id="fx"></div>
+			</section>
+
+			<aside class="panel">
+				<h1 class="title">Nganya Rush: Nairobi Nights</h1>
+				<p class="sub">Dodge traffic, pick passengers, catch hype orbs and keep the beat alive. The faster you go, the crazier the road gets.</p>
+
+				<div class="stats">
+					<div class="chip"><div class="k">Score</div><div class="v" id="score">0</div></div>
+					<div class="chip"><div class="k">Speed</div><div class="v" id="speed">1.0x</div></div>
+					<div class="chip"><div class="k">Combo</div><div class="v" id="combo">x1</div></div>
+					<div class="chip"><div class="k">Passengers</div><div class="v" id="passengers">0</div></div>
+				</div>
+
+				<div class="row">
+					<button class="btn" id="start-btn">Start Ride</button>
+					<button class="btn secondary" id="mute-btn">Beat On</button>
+				</div>
+
+				<div class="touch">
+					<div class="pad" id="left-pad">◀ Left</div>
+					<div class="pad" id="boost-pad">▲ Boost</div>
+					<div class="pad" id="right-pad">Right ▶</div>
+				</div>
+
+				<div class="note">
+					Controls: A/D or arrow keys to switch lanes. W/↑/Space to boost and stack combo. 4 lanes, slower traffic. Avoid incoming vehicles, collect passenger and hype icons.
+				</div>
+			</aside>
+		</div>
+	</div>
+</div>
+
+<script>
+	const lanes = [12, 37, 63, 88];
+	const stage = document.getElementById("stage");
+	const road = document.getElementById("road");
+	const fx = document.getElementById("fx");
+	const equalizer = document.getElementById("equalizer");
+	const scoreEl = document.getElementById("score");
+	const speedEl = document.getElementById("speed");
+	const comboEl = document.getElementById("combo");
+	const passengersEl = document.getElementById("passengers");
+	const startBtn = document.getElementById("start-btn");
+	const muteBtn = document.getElementById("mute-btn");
+
+	const S = {
+		running: false,
+		lane: 1,
+		speed: 0.55,
+		score: 0,
+		combo: 1,
+		passengers: 0,
+		beatOn: true,
+		entities: [],
+		roadLines: [],
+		spawnAt: 0,
+		pickupAt: 0,
+		hypeAt: 0,
+		last: 0,
+		audioCtx: null,
+		beatTimer: null,
+		eqTimer: null,
+		boostTimer: 0,
+		invincibleTimer: 0,
+		player: null,
+	};
+
+	const OBSTACLE_PALETTES = [
+		{ body: "#1f2937", roof: "#334155" },
+		{ body: "#0f172a", roof: "#1e293b" },
+		{ body: "#7c2d12", roof: "#9a3412" },
+		{ body: "#4c1d95", roof: "#5b21b6" },
+	];
+
+	function clamp(value, min, max) {
+		return Math.max(min, Math.min(max, value));
+	}
+
+	function showFx(text, good = true) {
+		fx.textContent = text;
+		fx.style.background = good ? "rgba(14,116,144,0.6)" : "rgba(185,28,28,0.6)";
+		fx.classList.remove("show");
+		void fx.offsetWidth;
+		fx.classList.add("show");
+	}
+
+	function vehicleSvg(bodyColor, roofColor, glassColor = "#bfdbfe") {
+		return `
+			<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+				<rect x="10" y="14" width="44" height="36" rx="10" fill="${bodyColor}" />
+				<rect x="14" y="18" width="36" height="12" rx="5" fill="${roofColor}" />
+				<rect x="16" y="32" width="10" height="10" rx="2" fill="${glassColor}" />
+				<rect x="28" y="32" width="8" height="10" rx="2" fill="${glassColor}" />
+				<rect x="38" y="32" width="10" height="10" rx="2" fill="${glassColor}" />
+				<circle cx="20" cy="50" r="4" fill="#020617" />
+				<circle cx="44" cy="50" r="4" fill="#020617" />
+			</svg>
+		`;
+	}
+
+	function passengerSvg() {
+		return `
+			<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+				<circle cx="32" cy="16" r="10" fill="#fde68a" />
+				<path d="M18 56 L24 30 H40 L46 56 Z" fill="#f59e0b" />
+				<rect x="27" y="27" width="10" height="20" rx="4" fill="#fef3c7" />
+			</svg>
+		`;
+	}
+
+	function hypeSvg() {
+		return `
+			<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+				<circle cx="32" cy="32" r="30" fill="#0ea5e9" />
+				<path d="M36 14 V38.5 A8 8 0 1 1 31 31 V20 L49 16 V33.5 A8 8 0 1 1 44 26 V22 Z" fill="#e0f2fe" />
+			</svg>
+		`;
+	}
+
+	function iconFor(type, variant) {
+		if (type.includes("passenger")) return passengerSvg();
+		if (type.includes("hype")) return hypeSvg();
+		if (type.includes("player")) return vehicleSvg("#f97316", "#ec4899", "#fef3c7");
+		return vehicleSvg(variant.body, variant.roof, "#dbeafe");
+	}
+
+	function createEntity(type, lane, yPercent, variant = null) {
+		const el = document.createElement("div");
+		el.className = `entity ${type}`;
+		el.innerHTML = iconFor(type, variant || OBSTACLE_PALETTES[0]);
+		stage.appendChild(el);
+		const obj = { el, type, lane, y: yPercent };
+		setEntityPos(obj);
+		return obj;
+	}
+
+	function setEntityPos(entity) {
+		entity.el.style.left = `${lanes[entity.lane]}%`;
+		entity.el.style.top = `${entity.y}%`;
+	}
+
+	function setupPlayer() {
+		if (S.player && S.player.el) S.player.el.remove();
+		S.player = createEntity("player", S.lane, 88);
+	}
+
+	function spawnTraffic() {
+		const lane = Math.floor(Math.random() * 4);
+		const variant = OBSTACLE_PALETTES[Math.floor(Math.random() * OBSTACLE_PALETTES.length)];
+		S.entities.push(createEntity("obstacle", lane, -12, variant));
+	}
+
+	function spawnPassenger() {
+		const lane = Math.floor(Math.random() * 4);
+		S.entities.push(createEntity("passenger pickup", lane, -10));
+	}
+
+	function spawnHype() {
+		const lane = Math.floor(Math.random() * 4);
+		S.entities.push(createEntity("hype pickup", lane, -10));
+	}
+
+	function removeEntity(entity) {
+		entity.el.remove();
+		S.entities = S.entities.filter((e) => e !== entity);
+	}
+
+	function intersects(a, b) {
+		const ra = a.el.getBoundingClientRect();
+		const rb = b.el.getBoundingClientRect();
+		return !(ra.right < rb.left || ra.left > rb.right || ra.bottom < rb.top || ra.top > rb.bottom);
+	}
+
+	function moveLane(dir) {
+		if (!S.running) return;
+		S.lane = clamp(S.lane + dir, 0, 3);
+		S.player.lane = S.lane;
+		setEntityPos(S.player);
+	}
+
+	function boost() {
+		if (!S.running) return;
+		S.boostTimer = 700;
+		showFx("BOOST!", true);
+	}
+
+	function updateStats() {
+		scoreEl.textContent = Math.floor(S.score).toLocaleString();
+		speedEl.textContent = `${S.speed.toFixed(1)}x`;
+		comboEl.textContent = `x${S.combo}`;
+		passengersEl.textContent = String(S.passengers);
+	}
+
+	function setupRoadLines() {
+		S.roadLines.forEach((line) => line.remove());
+		S.roadLines = [];
+		const markers = [25, 50, 75];
+		for (let i = 0; i < 12; i++) {
+			const line = document.createElement("div");
+			line.className = "line";
+			line.style.left = `${markers[i % markers.length]}%`;
+			line.dataset.y = String(i * 9);
+			road.appendChild(line);
+			S.roadLines.push(line);
+		}
+	}
+
+	function updateRoadLines(dt) {
+		const step = (0.025 + S.speed * 0.05 + (S.boostTimer > 0 ? 0.1 : 0)) * dt;
+		for (const line of S.roadLines) {
+			let y = Number(line.dataset.y || 0);
+			y += step;
+			if (y > 102) y = -8;
+			line.dataset.y = String(y);
+			line.style.top = `${y}%`;
+		}
+	}
+
+	function setupEqualizer() {
+		equalizer.innerHTML = "";
+		for (let i = 0; i < 18; i++) {
+			const bar = document.createElement("div");
+			bar.className = "bar";
+			equalizer.appendChild(bar);
+		}
+	}
+
+	function randomizeBars() {
+		const bars = equalizer.querySelectorAll(".bar");
+		bars.forEach((bar, i) => {
+			const base = S.beatOn ? 10 : 4;
+			const variance = S.beatOn ? 80 : 20;
+			const boost = S.boostTimer > 0 ? 14 : 0;
+			const h = base + ((Math.sin(Date.now() * 0.003 + i) + 1) * 0.5 * variance) + boost;
+			bar.style.height = `${h}%`;
+		});
+	}
+
+	function ensureAudio() {
+		if (!S.audioCtx) {
+			S.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+		}
+		if (S.audioCtx.state === "suspended") {
+			S.audioCtx.resume();
+		}
+	}
+
+	function blip(freq, dur, gain) {
+		if (!S.beatOn) return;
+		ensureAudio();
+		const now = S.audioCtx.currentTime;
+		const osc = S.audioCtx.createOscillator();
+		const g = S.audioCtx.createGain();
+		osc.type = "sawtooth";
+		osc.frequency.setValueAtTime(freq, now);
+		g.gain.setValueAtTime(0, now);
+		g.gain.linearRampToValueAtTime(gain, now + 0.01);
+		g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+		osc.connect(g).connect(S.audioCtx.destination);
+		osc.start(now);
+		osc.stop(now + dur + 0.02);
+	}
+
+	function startBeat() {
+		stopBeat();
+		S.beatTimer = setInterval(() => {
+			const freq = S.boostTimer > 0 ? 180 : 130;
+			blip(freq, 0.12, 0.015);
+		}, 320);
+		S.eqTimer = setInterval(randomizeBars, 110);
+	}
+
+	function stopBeat() {
+		if (S.beatTimer) clearInterval(S.beatTimer);
+		if (S.eqTimer) clearInterval(S.eqTimer);
+		S.beatTimer = null;
+		S.eqTimer = null;
+	}
+
+	function crash() {
+		S.running = false;
+		showFx("CRASH! Ride ended.", false);
+		startBtn.textContent = "Restart Ride";
+		blip(70, 0.35, 0.03);
+	}
+
+	function updateEntities(dt) {
+		const speedY = 0.015 + S.speed * 0.022 + (S.boostTimer > 0 ? 0.04 : 0);
+		for (const entity of [...S.entities]) {
+			entity.y += speedY * dt;
+			setEntityPos(entity);
+
+			if (entity.y > 112) {
+				removeEntity(entity);
+				if (entity.type.includes("obstacle")) {
+					S.combo = 1;
+				}
+				continue;
+			}
+
+			if (intersects(S.player, entity)) {
+				if (entity.type.includes("obstacle")) {
+					if (S.invincibleTimer <= 0) {
+						crash();
+						return;
+					}
+					removeEntity(entity);
+					showFx("BOOST SHIELD!", true);
+					continue;
+				}
+				if (entity.type.includes("passenger")) {
+					S.passengers += 1;
+					S.combo = clamp(S.combo + 1, 1, 12);
+					S.score += 120 * S.combo;
+					showFx(`+Passenger x${S.combo}`, true);
+					blip(240, 0.09, 0.02);
+					removeEntity(entity);
+					continue;
+				}
+				if (entity.type.includes("hype")) {
+					S.score += 180;
+					S.boostTimer = 900;
+					S.invincibleTimer = 500;
+					showFx("HYPE MODE!", true);
+					blip(320, 0.12, 0.025);
+					removeEntity(entity);
+				}
+			}
+		}
+	}
+
+	function loop(ts) {
+		if (!S.running) return;
+		if (!S.last) S.last = ts;
+		const dt = Math.min(40, ts - S.last);
+		S.last = ts;
+
+		S.score += (0.05 + S.speed * 0.08) * dt;
+		S.speed = clamp(0.55 + S.score / 22000, 0.55, 1.6);
+
+		if (S.boostTimer > 0) {
+			S.boostTimer -= dt;
+		} else {
+			S.boostTimer = 0;
+		}
+		if (S.invincibleTimer > 0) {
+			S.invincibleTimer -= dt;
+		} else {
+			S.invincibleTimer = 0;
+		}
+
+		updateRoadLines(dt);
+		updateEntities(dt);
+
+		if (ts > S.spawnAt) {
+			spawnTraffic();
+			S.spawnAt = ts + (980 - S.speed * 120 + Math.random() * 450);
+		}
+		if (ts > S.pickupAt) {
+			spawnPassenger();
+			S.pickupAt = ts + (1900 + Math.random() * 1200);
+		}
+		if (ts > S.hypeAt) {
+			spawnHype();
+			S.hypeAt = ts + (3200 + Math.random() * 2200);
+		}
+
+		if (Math.random() < 0.0015) {
+			showFx("BASS DROP!", true);
+			S.score += 40;
+			blip(260, 0.06, 0.014);
+		}
+
+		updateStats();
+		requestAnimationFrame(loop);
+	}
+
+	function reset() {
+		for (const e of S.entities) e.el.remove();
+		S.entities = [];
+		S.running = false;
+		S.lane = 1;
+		S.speed = 0.55;
+		S.score = 0;
+		S.combo = 1;
+		S.passengers = 0;
+		S.spawnAt = 0;
+		S.pickupAt = 0;
+		S.hypeAt = 0;
+		S.last = 0;
+		S.boostTimer = 0;
+		S.invincibleTimer = 0;
+		setupPlayer();
+		updateStats();
+	}
+
+	function startRide() {
+		reset();
+		S.running = true;
+		startBtn.textContent = "Running...";
+		showFx("Kazi ni barabara!", true);
+		ensureAudio();
+		startBeat();
+		requestAnimationFrame(loop);
+	}
+
+	document.addEventListener("keydown", (e) => {
+		if (["ArrowLeft", "a", "A"].includes(e.key)) {
+			e.preventDefault();
+			moveLane(-1);
+		}
+		if (["ArrowRight", "d", "D"].includes(e.key)) {
+			e.preventDefault();
+			moveLane(1);
+		}
+		if (["ArrowUp", "w", "W", " "].includes(e.key)) {
+			e.preventDefault();
+			boost();
+		}
+	});
+
+	startBtn.addEventListener("click", startRide);
+	muteBtn.addEventListener("click", () => {
+		S.beatOn = !S.beatOn;
+		muteBtn.textContent = S.beatOn ? "Beat On" : "Beat Off";
+		if (!S.beatOn && S.audioCtx) {
+			S.audioCtx.suspend();
+		}
+		if (S.beatOn) {
+			ensureAudio();
+		}
+	});
+
+	document.getElementById("left-pad").addEventListener("click", () => moveLane(-1));
+	document.getElementById("right-pad").addEventListener("click", () => moveLane(1));
+	document.getElementById("boost-pad").addEventListener("click", boost);
+
+	setupRoadLines();
+	setupEqualizer();
+	randomizeBars();
+	setInterval(randomizeBars, 220);
+	reset();
+</script>
+{% endblock %}
